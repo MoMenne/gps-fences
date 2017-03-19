@@ -13,6 +13,6 @@ allow-hotplug wlan0
 auto wlan0
 iface wlan0 inet static
 	address 192.168.1.201/24
-	wpa-ssid "Mennes_2.4GHz"
-	wpa-psk "3143043148"
+	wpa-ssid "$WIFI_SSID"
+	wpa-psk "$WIFI_PASS"
 
