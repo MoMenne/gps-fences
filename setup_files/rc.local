@@ -29,6 +29,7 @@ if [ "$_IP" ]; then
 fi
 
 sudo -u pi /home/pi/Code/gps-fences/multi-screen.py &
+sudo -u pi gpxlogger -d -f /tmp/gpslog.gpx
 # start the gpsd daemon
 /etc/booted/startgpsd.sh
 
