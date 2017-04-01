@@ -4,6 +4,7 @@ import os
 import time
 import pdb
 import socket
+import logging
 # this makes it easy to find the local IP
 from netifaces import interfaces, ifaddresses, AF_INET
 
@@ -24,6 +25,7 @@ class InternetPoller(threading.Thread):
             s.close()
             self.status = " up"
         except:
+            logging.debug("internet disconnected")
             pdb.set_trace()
             self.status = "dwn"
         time.sleep(1)
