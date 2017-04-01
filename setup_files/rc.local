@@ -10,7 +10,17 @@
 # In order to enable or disable this script just change the execution
 # bits.
 #
-# By default this script does nothing.
+
+printf "JUMP_IP %s\n" "$JUMP_IP"
+if [ -n "$JUMP_IP" ]; then
+  echo "Attempting to connect to remote server"
+  su pi -c "/usr/bin/autossh -N -R $JUMP_PORT:localhost:22 root@$JUMP_IP &"
+  if [ $? -eq 0 ]; then
+    echo Tunnel created successfully
+  else
+    echo An error occurred creating the tunnel.  RC was $1.
+  fi
+fi
 
 # Print the IP address
 _IP=$(hostname -I) || true
@@ -18,7 +28,7 @@ if [ "$_IP" ]; then
   printf "My IP address is %s\n" "$_IP"
 fi
 
-sudo -u pi /home/pi/Code/gps-fences/screen.py &
+sudo -u pi /home/pi/Code/gps-fences/multi-screen.py &
 # start the gpsd daemon
 /etc/booted/startgpsd.sh
 
