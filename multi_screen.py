@@ -16,7 +16,7 @@ import dothat.touch as nav
 # this makes it easy to find the local IP
 from netifaces import interfaces, ifaddresses, AF_INET
 
-logging.basicConfig(filename="logs/application.log", level=logging.DEBUG, format='%(asctime)s %(levelname)s-%(message)s')
+logging.basicConfig(filename="/home/pi/Code/gps-fences/logs/application.log", level=logging.DEBUG, format='%(asctime)s %(levelname)s-%(message)s')
 
 logging.debug("""
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -42,6 +42,8 @@ def handle_switch_right(ch, evt):
         current_screen += 1
 
 if __name__ == '__main__':
+    lcd.write("Hello.  One sec while I boot up")
+    backlight.rgb(255,0,255)
     gpsp = GpsPoller()
     internet_poller = InternetPoller()
     zone_poller = ZonePoller(gpsp)
@@ -79,5 +81,9 @@ if __name__ == '__main__':
         logging.debug("Shutting it down")
         gpsp.running = False
         gpsp.join()
+        internet_poller.running = False
+        internet_poller.join()
+        zone_poller.running = False
+        zone_poller.join()
 
     logging.debug("All Done.  Exiting")

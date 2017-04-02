@@ -10,11 +10,13 @@ class ZonePoller(threading.Thread):
         threading.Thread.__init__(self)
         self.gps_poller = gps_poller
         self.zone_calculator = ZoneCalculator('saint_louis.json')
+        self.running = True
         self.current_zone = None
 
     def run(self):
-        latitude = self.gps_poller.gpsd.fix.latitude
-        longitude = self.gps_poller.gpsd.fix.longitude
-        self.current_zone = self.zone_calculator.current_zone(latitude, longitude)
-        time.sleep(1)
+        while self.running:
+            latitude = self.gps_poller.gpsd.fix.latitude
+            longitude = self.gps_poller.gpsd.fix.longitude
+            self.current_zone = self.zone_calculator.current_zone(latitude, longitude)
+            time.sleep(1)
 
