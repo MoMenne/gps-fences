@@ -28,9 +28,9 @@ if [ "$_IP" ]; then
   printf "My IP address is %s\n" "$_IP"
 fi
 
-sudo -u pi /home/pi/Code/gps-fences/multi-screen.py &
 sudo -u pi gpxlogger -d -f /tmp/gpslog.gpx
 sudo -u pi python /home/pi/Code/gps-fences/setup_files/gegpsd.py & cd /tmp & python -m SimpleHTTPServer &
 # start the gpsd daemon
 /etc/booted/startgpsd.sh
 
+sudo -u pi python /home/pi/Code/gps-fences/multi_screen.py &
