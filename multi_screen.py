@@ -6,6 +6,7 @@ import pdb
 import logging
 from gps_thread import GpsPoller
 from internet_thread import InternetPoller
+from zone_thread import ZonePoller
 
 import dothat.backlight as backlight
 import dothat.lcd as lcd
@@ -24,7 +25,7 @@ Starting up Raspi GPS
 """)
 
 current_screen = 0 
-screens = ["gps", "internet"]
+screens = ["gps", "internet", "zone"]
 
 @nav.on(nav.LEFT)
 def handle_switch(ch, evt):
@@ -43,14 +44,16 @@ def handle_switch_right(ch, evt):
 if __name__ == '__main__':
     gpsp = GpsPoller()
     internet_poller = InternetPoller()
+    zone_poller = ZonePoller(gpsp)
     try:
         gpsp.start()
         internet_poller.start()
+        zone_poller.start()
         time.sleep(1)
         logging.debug("starting ip address %s", internet_poller.eth0_address[0])
         logging.debug("starting gps data %.2f %.5f %.5f", gpsp.gpsd.fix.track, gpsp.gpsd.fix.latitude, gpsp.gpsd.fix.longitude)
         while True:
-            if current_screen % 2 == 0:
+            if current_screen % 3 == 0:
                 lcd.clear
                 lcd.set_cursor_position(0,0)
                 lcd.write("heading " + "%.2f" % gpsp.gpsd.fix.track )
@@ -58,6 +61,12 @@ if __name__ == '__main__':
                 lcd.write("lat  " + "%.5f" % gpsp.gpsd.fix.latitude )
                 lcd.set_cursor_position(0,2)
                 lcd.write("long " + "%.5f" % gpsp.gpsd.fix.longitude)
+            elif current_screen % 3 == 1:
+                lcd.clear
+                lcd.set_cursor_position(5,0)
+                lcd.write("Zone")
+                lcd.set_cursor_position(0,2)
+                lcd.write(zone_poller.current_zone)
             else:
                 lcd.clear()
                 lcd.set_cursor_position(0,2)
