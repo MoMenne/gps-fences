@@ -4,6 +4,7 @@ import socket
 import signal
 import pdb
 import logging
+import os
 from gps_thread import GpsPoller
 from internet_thread import InternetPoller
 from zone_thread import ZonePoller
@@ -25,11 +26,31 @@ Starting up Raspi GPS
 """)
 
 current_screen = 0 
+shutdown_question = False
 screens = ["gps", "internet", "zone"]
+
+@nav.on(nav.CANCEL)
+def handle_back(ch, evt):
+    global shutdown_question
+    shutdown_question = True
+
+@nav.on(nav.BUTTON)
+def handle_button(ch, evt):
+    if shutdown_question:
+        lcd.clear()
+        lcd.set_cursor_position(0,0)
+        lcd.write("Good Night")
+        lcd.set_cursor_position(0,1)
+        lcd.write("count to 10")
+        lcd.set_cursor_position(0,2)
+        lcd.write("before unplugging")
+        os.system("sudo shutdown -h now")        
 
 @nav.on(nav.LEFT)
 def handle_switch(ch, evt):
 	logging.debug("switching left!")
+        global shutdown_question
+        shutdown_question = False
 	lcd.clear()
         global current_screen
         current_screen -= 1
@@ -37,6 +58,8 @@ def handle_switch(ch, evt):
 @nav.on(nav.RIGHT)
 def handle_switch_right(ch, evt):
 	logging.debug("switching right!")
+        global shutdown_question
+        shutdown_question = False
 	lcd.clear()
         global current_screen
         current_screen += 1
@@ -55,7 +78,15 @@ if __name__ == '__main__':
         logging.debug("starting ip address %s", internet_poller.eth0_address[0])
         logging.debug("starting gps data %.2f %.5f %.5f", gpsp.gpsd.fix.track, gpsp.gpsd.fix.latitude, gpsp.gpsd.fix.longitude)
         while True:
-            if current_screen % 3 == 0:
+            if shutdown_question:
+                lcd.clear()
+                lcd.set_cursor_position(0,0)
+                lcd.write("Shutdown?")
+                lcd.set_cursor_position(0,1)
+                lcd.write("Press + for Yes")
+                lcd.set_cursor_position(0,2)
+                lcd.write("Press < or > for No")
+            elif current_screen % 3 == 0:
                 lcd.clear
                 lcd.set_cursor_position(0,0)
                 lcd.write("heading " + "%.2f" % gpsp.gpsd.fix.track )
