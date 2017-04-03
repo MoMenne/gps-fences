@@ -19,8 +19,8 @@ class ZoneCalculator:
         point = Point(latitude, longitude)
         for zone in self.data:
             polygon = Polygon(map(lambda x: [x['lat'], x['long']], zone['points']))
-            logging.debug("In {}".format(zone['zone']))
             if polygon.contains(point):
+                logging.debug("In {}".format(zone['zone']))
                 return zone['zone']
 
         return "No Zone"
