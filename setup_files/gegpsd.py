@@ -1,4 +1,5 @@
 #!env python
+import pdb
 import gps
 
 file = '/tmp/nmea.kml'
@@ -8,7 +9,7 @@ session = gps.gps(host="localhost", port="2947")
 session.stream(flags=gps.WATCH_JSON)
 
 for report in session:
-   if report['class'] == 'TPV':
+   if report['class'] == 'TPV' and 'lat' in report:
        latitude  = report['lat']
        longitude = report['lon']
        altitude = report['alt']

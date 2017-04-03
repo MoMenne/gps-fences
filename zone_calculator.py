@@ -1,6 +1,7 @@
 #! /usr/bin/python
 import pdb
 import json
+import logging
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 
@@ -18,6 +19,7 @@ class ZoneCalculator:
         point = Point(latitude, longitude)
         for zone in self.data:
             polygon = Polygon(map(lambda x: [x['lat'], x['long']], zone['points']))
+            logging.debug("In {}".format(zone['zone']))
             if polygon.contains(point):
                 return zone['zone']
 
